@@ -2,10 +2,8 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> {
-
+public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
     public int size;
-
     public T[] L;
 
     public ArrayDeque() {
@@ -23,6 +21,7 @@ public class ArrayDeque<T> {
         System.arraycopy(L, 0, a, 0, size);
         L = a;
     }
+    @Override
     public void addFirst(T item) {
         if (size >= L.length) {
             expand();
@@ -33,17 +32,18 @@ public class ArrayDeque<T> {
         L[0] = item;
         size++;
     }
+    @Override
     public void addLast(T item) {
         if (size >= L.length) {
             expand();
         }
         L[size++] = item;
     }
-
+    @Override
     public T removeFirst() {
         T item = L[0];
         T[] a = (T[]) new Object[L.length];
-        System.arraycopy(L, 1, a, 0, size);
+        System.arraycopy(L, 1, a, 0, size - 1);
         L = a;
         size--;
 
@@ -54,31 +54,27 @@ public class ArrayDeque<T> {
         return item;
     }
 
-
+    @Override
     public T removeLast() {
         T item = L[size - 1];
         size--;
         L[size] = null;
-
-        int InverseUsage = L.length / size;
-        if (L.length >= 16 && InverseUsage >= 4) {
-            shrink();
+        if (size > 0) {
+            int InverseUsage = L.length / size;
+            if (L.length >= 16 && InverseUsage >= 4) {
+                shrink();
+            }
         }
+
 
         return item;
     }
 
-
-    public boolean isEmpty() {
-        if (size == 0) {
-            return true;
-        }
-        return false;
-    }
+    @Override
     public int size() {
         return size;
     }
-
+    @Override
     public T get(int index) {
         if (index >= size || index < 0) {
             return null;
@@ -86,6 +82,7 @@ public class ArrayDeque<T> {
         return L[index];
     }
 
+    @Override
     public void printDeque() {
         for (int i = 0; i < size; i++) {
             System.out.print(L[i] + " ");
@@ -94,10 +91,10 @@ public class ArrayDeque<T> {
     }
 
     public Iterator<T> iterator() {
-        return new ArrayDeque.MaxArrayIterator();
+        return new ArrayIterator();
     }
 
-    private class MaxArrayIterator implements Iterator<T> {
+    private class ArrayIterator implements Iterator<T> {
         int pos = 0;
         @Override
         public boolean hasNext() {
@@ -139,19 +136,11 @@ public class ArrayDeque<T> {
         L.addFirst(10);
         L.addFirst(20);
         L.addLast(30);
-        System.out.println(L.removeFirst());
-        System.out.println(L.removeLast());
-        System.out.println(L.removeFirst());
-        System.out.println(L.removeLast());
-        System.out.println(L.removeFirst());
-        System.out.println(L.removeLast());
-        System.out.println(L.removeFirst());
-        System.out.println(L.removeLast());
-        System.out.println(L.removeFirst());
-        System.out.println(L.removeLast());
-        System.out.println(L.removeFirst());
-        System.out.println(L.removeLast());
-        System.out.println();
+
+        for (int item : L) {
+            System.out.println(item);
+        }
+
     }
 
 }

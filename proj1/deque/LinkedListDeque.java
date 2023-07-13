@@ -2,10 +2,13 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> {
+public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
 
     public AnyNode sentinel;
     int size;
+
+
+
     private class AnyNode {
         public T item;
         public AnyNode next;
@@ -40,6 +43,7 @@ public class LinkedListDeque<T> {
 
     }
 
+    @Override
     public void addFirst(T item) {
         sentinel.next.prev = new AnyNode(item, sentinel.next, sentinel);
         sentinel.next = sentinel.next.prev;
@@ -47,6 +51,7 @@ public class LinkedListDeque<T> {
         size++;
     }
 
+    @Override
     public void addLast(T item) {
         sentinel.prev.next = new AnyNode(item, sentinel, sentinel.prev);
         sentinel.prev = sentinel.prev.next;
@@ -54,6 +59,7 @@ public class LinkedListDeque<T> {
         size++;
     }
 
+    @Override
     public void printDeque() {
         AnyNode n = sentinel.next;
 
@@ -64,15 +70,11 @@ public class LinkedListDeque<T> {
         System.out.println();
     }
 
-    public boolean isEmpty() {
-        if (size == 0) {
-            return true;
-        }
-        return false;
-    }
+    @Override
     public int size() {
         return size;
     }
+    @Override
     public T removeFirst() {
         if (sentinel.next == sentinel) {
             return null;
@@ -85,7 +87,7 @@ public class LinkedListDeque<T> {
         size--;
         return item;
     }
-
+    @Override
     public T removeLast() {
         if (sentinel.prev == sentinel) {
             return null;
@@ -98,6 +100,7 @@ public class LinkedListDeque<T> {
         return item;
     }
 
+    @Override
     public T get(int index) {
         AnyNode n = sentinel.next;
         if (index >= this.size() || index < 0 || n == sentinel) {
@@ -128,19 +131,26 @@ public class LinkedListDeque<T> {
     }
 
     public Iterator<T> iterator() {
-        Iterator x = new Iterator() {
-            @Override
-            public boolean hasNext() {
-                return false;
-            }
-
-            @Override
-            public Object next() {
-                return null;
-            }
-        };
-        return x;
+      return new LinkedListIterator();
     }
+
+    private class LinkedListIterator implements Iterator<T> {
+        AnyNode list = sentinel.next;
+        @Override
+        public boolean hasNext() {
+            if (sentinel.next != sentinel) {
+                return true;
+            }
+            return false;
+        }
+        @Override
+        public T next() {
+            T item = list.item;
+            list = list.next;
+            return item;
+        }
+    }
+
     public boolean equals(Object o) {
         if (o instanceof LinkedListDeque && this.equals(o)) {
             return true;

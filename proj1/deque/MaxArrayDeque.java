@@ -1,10 +1,12 @@
 package deque;
 
+import net.sf.saxon.functions.Minimax;
 
 import java.util.Comparator;
 
-public class MaxArrayDeque<T> extends ArrayDeque<T> implements Iterable<T>, Comparable<MaxArrayDeque>{
+public class MaxArrayDeque<T> extends ArrayDeque<T> implements Comparable<MaxArrayDeque>, Deque<T>{
     private Comparator<T> c;
+
 
     public MaxArrayDeque(Comparator<T> c) {
         super();
@@ -18,9 +20,9 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> implements Iterable<T>, Comp
             return null;
         }
         for (int i = 0; i < size; i++) {
-            int cmp = c.compare(L[i], L[i+1]);
-            if (cmp > 0) {
-                maxIndex = i + 1;
+            int cmp = c.compare(L[maxIndex], L[i]);
+            if (cmp < 0) {
+                maxIndex = i;
             }
         }
         return L[maxIndex];
@@ -33,60 +35,72 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> implements Iterable<T>, Comp
             return null;
         }
         for (int i = 0; i < size; i++) {
-            int cmp = c.compare(L[i], L[i+1]);
-            if (cmp > 0) {
-                maxIndex = i + 1;
+            int cmp = c.compare(L[maxIndex], L[i]);
+            if (cmp < 0) {
+                maxIndex = i;
             }
         }
         return L[maxIndex];
     }
-    /**
-    public SizeComparator<T> getItemComparator() {
-        return new SizeComparator<T>();
+
+    public static void main(String[] args) {
+
+        ItemComparator itemComparator = getItemComparator();
+        MaxArrayDeque<Integer> L = new MaxArrayDeque<>(itemComparator);
+        MaxArrayDeque<Integer> L2 = new MaxArrayDeque<>(itemComparator);
+        L.addLast(0);
+        L.addLast(1);
+        L.addLast(10);
+        L.addLast(4);
+        L.addLast(8);
+        L.addLast(9);
+        L.addLast(3);
+
+        L2.addLast(0);
+        L2.addLast(1);
+        L2.addLast(12130);
+        L2.addLast(4);
+        L2.addLast(8);
+        L2.addLast(402);
+        L2.addLast(32);
+        L2.addLast(32);
+        System.out.println(L2.max(itemComparator));
+        System.out.println(L.max());
+
+
+        SizeComparator sizeComparator = new SizeComparator();
+
+        System.out.println(sizeComparator.compare(L, L2));
+
     }
 
-    private static class SizeComparator<T> implements Comparator<MaxArrayDeque> {
+    @Override
+    public int compareTo(MaxArrayDeque o) {
+        return this.size - o.size;
+    }
+
+    private static class SizeComparator implements Comparator<MaxArrayDeque> {
+        @Override
         public int compare(MaxArrayDeque o1, MaxArrayDeque o2) {
             return o1.compareTo(o2);
         }
-
     }
 
-    public int compareTo(MaxArrayDeque o1) {
-        return size - o1.size;
+    public static SizeComparator getSizeComparator() {
+        return new SizeComparator();
     }
-    **/
-
-    private static class ItemComparator implements Comparator<MaxArrayDeque> {
 
 
-        public int compare(MaxArrayDeque o1, MaxArrayDeque o2) {
-            return o1.;
+    private static class ItemComparator implements Comparator<Integer> {
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            return o1 - o2;
         }
     }
 
-    public int compareTo(MaxArrayDeque o, int i) {
-        return this.L[i] - o.L[i];
+    public static ItemComparator getItemComparator() {
+        return new ItemComparator();
     }
 
-    public static void main(String[] args) {
-        ItemComparator comparator = new ItemComparator();
-
-        MaxArrayDeque<Integer> list = new MaxArrayDeque<Integer>(comparator);
-        list.addLast(10);
-        list.addLast(20);
-        list.addLast(30);
-        list.addLast(40);
-        list.addLast(50);
-
-        MaxArrayDeque<Integer> list2 = new MaxArrayDeque<Integer>(comparator);
-        list2.addLast(10);
-        list2.addLast(20);
-        list2.addLast(30);
-        list2.addLast(50);
-        list2.addLast(50);
-        System.out.println(comparator.compare(list, list2));
-
-    }
 
 }
