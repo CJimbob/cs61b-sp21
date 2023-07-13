@@ -50,8 +50,8 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         L = a;
         size--;
 
-        int InverseUsage = L.length / size;
-        if (L.length >= 16 && InverseUsage >= 4) {
+        double usage = size / L.length;
+        if (L.length >= 16 && usage <= 0.25) {
             shrink();
         }
         return item;
@@ -66,8 +66,8 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         size--;
         L[size] = null;
 
-        int InverseUsage = L.length / size;
-        if (L.length >= 16 && InverseUsage >= 4) {
+        double usage = size / L.length;
+        if (L.length >= 16 && usage <= 0.25) {
             shrink();
         }
 
@@ -148,6 +148,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
             System.out.println(item);
         }
         System.out.println(L.equals(L2));
+
+        ArrayDeque<Integer> L3 = new ArrayDeque<>();
+        System.out.println(L3.removeLast());
 
     }
 
