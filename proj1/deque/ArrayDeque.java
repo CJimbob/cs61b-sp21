@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
+public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     public int size;
     public T[] L;
 
@@ -41,6 +41,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
     }
     @Override
     public T removeFirst() {
+        if (size == 0) {
+            return null;
+        }
         T item = L[0];
         T[] a = (T[]) new Object[L.length];
         System.arraycopy(L, 1, a, 0, size - 1);
@@ -56,15 +59,18 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
 
     @Override
     public T removeLast() {
+        if (size == 0) {
+            return null;
+        }
         T item = L[size - 1];
         size--;
         L[size] = null;
-        if (size > 0) {
-            int InverseUsage = L.length / size;
-            if (L.length >= 16 && InverseUsage >= 4) {
-                shrink();
-            }
+
+        int InverseUsage = L.length / size;
+        if (L.length >= 16 && InverseUsage >= 4) {
+            shrink();
         }
+
 
 
         return item;
@@ -111,35 +117,36 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
     }
 
     public boolean equals(Object o) {
-        if (o instanceof ArrayDeque && this.equals(o)) {
-            return true;
+        if (o instanceof ArrayDeque) {
+            ArrayDeque<T> newO = (ArrayDeque<T>) o;
+            if (this.size != newO.size) {
+                return false;
+            }
+            int pos = 0;
+            for (T item : this) {
+                if (item != newO.L[pos]) {
+                    return false;
+                }
+                pos++;
+            }
         }
-        return false;
+        return true;
     }
     public static void main(String[] args) {
         ArrayDeque<Integer> L = new ArrayDeque<>();
         L.addFirst(10);
         L.addFirst(20);
         L.addLast(30);
-        L.addFirst(10);
-        L.addFirst(20);
-        L.addLast(30);
-        L.addFirst(10);
-        L.addFirst(20);
-        L.addLast(30);
-        L.addFirst(10);
-        L.addFirst(20);
-        L.addLast(30);
-        L.addFirst(10);
-        L.addFirst(20);
-        L.addLast(30);
-        L.addFirst(10);
-        L.addFirst(20);
-        L.addLast(30);
+
+        ArrayDeque<Integer> L2 = new ArrayDeque<>();
+        L2.addFirst(10);
+        L2.addFirst(20);
+        L2.addLast(30);
 
         for (int item : L) {
             System.out.println(item);
         }
+        System.out.println(L.equals(L2));
 
     }
 

@@ -138,7 +138,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
         AnyNode list = sentinel.next;
         @Override
         public boolean hasNext() {
-            if (sentinel.next != sentinel) {
+            if (list.next != sentinel) {
                 return true;
             }
             return false;
@@ -152,19 +152,37 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof LinkedListDeque && this.equals(o)) {
-            return true;
+
+
+        if (o instanceof LinkedListDeque) {
+            LinkedListDeque<T> newO = (LinkedListDeque<T>) o;
+            if (this.size != newO.size) {
+                return false;
+            }
+            AnyNode n1 = newO.sentinel.next;
+            for (T item : this) {
+                if (item != n1.item) return false;
+                n1 = n1.next;
+            }
         }
-        return false;
+        return true;
     }
 
     public static void main(String[] args) {
         LinkedListDeque<Integer> L = new LinkedListDeque<>();
+        L.addLast(10);
         L.addFirst(10);
         L.addFirst(20);
         L.addFirst(30);
-        LinkedListDeque<Integer> L2 = new LinkedListDeque<>(L);
-        System.out.println(L.getRecursive(1));
+
+        LinkedListDeque<Integer> L2 = new LinkedListDeque<>();
+        L2.addLast(10);
+        L2.addFirst(10);
+        L2.addFirst(20);
+        L2.addFirst(30);
+
+
+        System.out.println(L.equals(L2));
 
 
     }
