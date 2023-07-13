@@ -66,7 +66,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         size--;
         L[size] = null;
 
-        double usage = size / L.length;
+        double usage = (double) size / (double) L.length;
         if (L.length >= 16 && usage <= 0.25) {
             shrink();
         }
@@ -132,24 +132,13 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     }
     public static void main(String[] args) {
         ArrayDeque<Integer> L = new ArrayDeque<>();
-        L.addFirst(10);
-        L.addFirst(20);
-        L.addLast(30);
-        L.addFirst(10);
-        L.addFirst(20);
-        L.addLast(30);
-        L.addFirst(10);
-        L.addFirst(20);
-        L.addLast(30);
-        L.removeFirst();
-        L.removeFirst();
-        L.removeFirst();
-        L.removeFirst();
-        L.removeFirst();
-        L.removeFirst();
-        L.removeFirst();
-        L.removeFirst();
-        L.removeFirst();
+        for (int i = 0; i < 1000; i++) {
+            L.addLast(0);
+        }
+        for (int i = 0; i < 1000; i++) {
+            L.removeFirst();
+        }
+
 
         ArrayDeque<Integer> L2 = new ArrayDeque<>();
         L2.addFirst(10);
