@@ -138,7 +138,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
         AnyNode list = sentinel.next;
         @Override
         public boolean hasNext() {
-            if (list.next != sentinel) {
+            if (list != sentinel) {
                 return true;
             }
             return false;
@@ -182,6 +182,9 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
         L2.addFirst(20);
         L2.addFirst(30);
 
+        for (int item : L) {
+            System.out.println(item);
+        }
 
         System.out.println(L.equals(L2));
 
