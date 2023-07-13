@@ -129,8 +129,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
                 }
                 pos++;
             }
+            return true;
         }
-        return true;
+        return false;
     }
     public static void main(String[] args) {
         ArrayDeque<Integer> L = new ArrayDeque<>();

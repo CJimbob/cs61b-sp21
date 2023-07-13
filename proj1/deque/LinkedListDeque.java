@@ -164,8 +164,9 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
                 if (item != n1.item) return false;
                 n1 = n1.next;
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     public static void main(String[] args) {
