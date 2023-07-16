@@ -7,11 +7,12 @@ import static capers.Utils.*;
 /** Represents a dog that can be serialized.
  * @author TODO
 */
-public class Dog { // TODO
+public class Dog implements Serializable { // TODO
 
     /** Folder that dogs live in. */
-    static final File DOG_FOLDER = null; // TODO (hint: look at the `join`
+    static final File DOG_FOLDER = Utils.join(".capers","dogs"); // TODO (hint: look at the `join`
                                          //      function in Utils)
+    static final File DOG_NAME_FILE = Utils.join(DOG_FOLDER, "dogNames");
 
     /** Age of dog. */
     private int age;
@@ -19,6 +20,9 @@ public class Dog { // TODO
     private String breed;
     /** Name of dog. */
     private String name;
+
+    /** Number of dogs. */
+    private int numOfDogs;
 
     /**
      * Creates a dog object with the specified parameters.
@@ -40,7 +44,10 @@ public class Dog { // TODO
      */
     public static Dog fromFile(String name) {
         // TODO (hint: look at the Utils file)
-        return null;
+        File dogFile = Utils.join(DOG_FOLDER, name);
+        Dog dog = readObject(dogFile, Dog.class);
+
+        return dog;
     }
 
     /**
@@ -48,8 +55,13 @@ public class Dog { // TODO
      */
     public void haveBirthday() {
         age += 1;
-        System.out.println(toString());
+        System.out.println(this);
         System.out.println("Happy birthday! Woof! Woof!");
+
+        File thisDog = Utils.join(DOG_FOLDER, name);
+        writeObject(thisDog, this);
+
+
     }
 
     /**
@@ -57,6 +69,25 @@ public class Dog { // TODO
      */
     public void saveDog() {
         // TODO (hint: don't forget dog names are unique)
+        String names = readContentsAsString(DOG_NAME_FILE);
+        String[] nameArray = names.split(" ", -1);
+        boolean flag = true;
+
+        for (int i = 0; i < nameArray.length; i++) {
+            if (nameArray[i].equals(name)) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag == true) {
+            File thisDog = Utils.join(DOG_FOLDER, name);
+            writeObject(thisDog, this);
+            writeContents(DOG_NAME_FILE, names, name, " ");
+            System.out.println(this);
+        } else {
+            System.out.println("This name is taken");
+        }
+
     }
 
     @Override
