@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Comparator;
 
-public class MaxArrayDeque<T> extends ArrayDeque<T> implements Comparable<MaxArrayDeque>, Deque<T>{
+public class MaxArrayDeque<T> extends ArrayDeque<T> implements Comparable<MaxArrayDeque>, Deque<T> {
     private Comparator<T> c;
 
 
@@ -14,10 +14,10 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> implements Comparable<MaxArr
     public T max() {
         int maxIndex = 0;
 
-        if (size == 0) {
+        if (size() == 0) {
             return null;
         }
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size(); i++) {
             int cmp = c.compare(L[maxIndex], L[i]);
             if (cmp < 0) {
                 maxIndex = i;
@@ -29,10 +29,10 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> implements Comparable<MaxArr
     public T max(Comparator<T> c) {
         int maxIndex = 0;
 
-        if (size == 0) {
+        if (size() == 0) {
             return null;
         }
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size(); i++) {
             int cmp = c.compare(L[maxIndex], L[i]);
             if (cmp < 0) {
                 maxIndex = i;
@@ -74,7 +74,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> implements Comparable<MaxArr
 
     @Override
     public int compareTo(MaxArrayDeque o) {
-        return this.size - o.size;
+        return this.size() - o.size();
     }
 
     private static class SizeComparator implements Comparator<MaxArrayDeque> {

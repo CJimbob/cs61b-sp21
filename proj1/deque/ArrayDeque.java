@@ -3,7 +3,7 @@ package deque;
 import java.util.Iterator;
 
 public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
-    public int size;
+    private int size;
     public T[] L;
 
     public ArrayDeque() {
