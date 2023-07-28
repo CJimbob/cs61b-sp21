@@ -10,12 +10,11 @@ public class Blob implements Serializable {
     public static final File CWD = Repository.CWD;
     public static final File BLOB_DIR = Repository.BLOB_DIR;
 
-    private String fileContent;
+    private byte[] fileContent;
 
     private String fileName;
     private String hashCode;
 
-    private boolean commited = false;
 
     /** File in working directory */
     public File workingFile;
@@ -23,13 +22,13 @@ public class Blob implements Serializable {
     public Blob(String fileName) {
         this.fileName = fileName;
         workingFile = Utils.join(CWD, fileName);
-        fileContent = Utils.readContentsAsString(workingFile);
+        fileContent = Utils.readContents(workingFile);
         this.setHashCode();
 
     }
     /** Hash Code Generation */
     public void setHashCode() {
-        hashCode = Utils.sha1(Utils.readContents(workingFile));
+        hashCode = Utils.sha1(Utils.serialize(this));
     }
     public String getHashCode() {
         return hashCode;
@@ -45,26 +44,26 @@ public class Blob implements Serializable {
         return this.fileName;
     }
 
-    public static Blob readBlobFromFile(String hashCode) {
+    public byte[] getFileContent() {
+        return fileContent;
+    }
+
+    public static Blob getBlob(String hashCode) {
         File blobFile = Utils.join(BLOB_DIR, hashCode);
         return Utils.readObject(blobFile, Blob.class);
     }
 
-    public void updateContent() {
-        fileContent = Utils.readContentsAsString(workingFile);
+    public void mergeBlob(Blob currentBlob, Blob givenBlob) {
+        String string1 = "<<<<<<< HEAD\n";
+        String string2 = "=======\n";
+        String string3 = ">>>>>>>";
+        byte[] array1 = string1.getBytes();
+        byte[] array2 = string2.getBytes();
+        byte[] array3 = string3.getBytes();
+        this.fileContent = new byte[array1.length + currentBlob.getFileContent().length + array2.length + givenBlob.getFileContent().length + array3.length];
+
     }
 
-    public String getFileContent() {
-        return fileContent;
-    }
-
-    public boolean isCommited() {
-        return commited;
-    }
-
-    public void setCommited() {
-        commited = true;
-    }
 
 
 }
