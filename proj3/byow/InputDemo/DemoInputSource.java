@@ -11,14 +11,14 @@ public class DemoInputSource {
     private static final int STRING = 2;
 
     public static void main(String[] args) {
-        int inputType = KEYBOARD;
+        int inputType = STRING;
 
         InputSource inputSource;
 
         if (inputType == KEYBOARD) {
             inputSource = new KeyboardInputSource();
         } else if (inputType == RANDOM) {
-            inputSource = new RandomInputSource(50L);
+            inputSource = new RandomInputSource(1500L);
         } else { // inputType == STRING
             inputSource = new StringInputDevice("HELLO MY FRIEND. QUACK QUACK");
         }

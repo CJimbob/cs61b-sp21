@@ -2,9 +2,6 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static gitlet.Utils.*;
@@ -158,9 +155,9 @@ public class Repository {
 
 
     public static void status() {
-        HashMap<String, Commit> branches = Branches.getBranches();
+        HashMap<String, String> branches = Branches.getBranches();
         System.out.println("=== Branches ===");
-        for (Map.Entry<String, Commit> entry : branches.entrySet()) {
+        for (Map.Entry<String, String> entry : branches.entrySet()) {
             String branchName = entry.getKey();
             if (branchName.equals("headPointer")) continue;
             if (branchName.equals(Branches.currentBranch)) {
@@ -202,12 +199,23 @@ public class Repository {
             Commit commit = Branches.getCommit("headPointer");
             HashMap<String, String> Blobs = commit.getBlobs();
             String hashCode = Blobs.get(name);
+            if (hashCode == null) {
+                System.out.println("File does not exist in that commit.");
+                return;
+            }
             File blobFile = Utils.join(BLOB_DIR, hashCode);
             Blob blob = Utils.readObject(blobFile, Blob.class);
             File file = Utils.join(CWD, name);
             Utils.writeContents(file, blob.getFileContent());
         } else if (operation == 2){
             Commit commit = Branches.getCommit(name);
+            if (commit == null) {
+                System.out.println("No such branch exists.");
+                return;
+            } else if (Branches.currentBranch.equals(name)) {
+                System.out.println("No need to checkout the current branch.");
+                return;
+            }
             HashMap<String, String> Blobs = commit.getBlobs();
             for (Map.Entry<String, String> entry : Blobs.entrySet()) {
                 String fileName = entry.getKey();
@@ -223,8 +231,16 @@ public class Repository {
 
     public static void checkout (String commitID, String fileName) {
         Commit commit = Commit.getCommit(commitID);
+        if (commit == null) {
+            System.out.println("No commit with that id exists.");
+            return;
+        }
         HashMap<String, String> Blobs = commit.getBlobs();
         String hashCode = Blobs.get(fileName);
+        if (hashCode == null) {
+            System.out.println("File does not exist in that commit.");
+            return;
+        }
         File blobFile = Utils.join(BLOB_DIR, hashCode);
         Blob blob = Utils.readObject(blobFile, Blob.class);
         File file = Utils.join(CWD, fileName);
@@ -232,6 +248,10 @@ public class Repository {
     }
 
     public static void branch(String branchName) {
+        if (Branches.getBranches().containsKey(branchName)) {
+            System.out.println("A branch with that name already exists");
+            return;
+        }
         headPointer = Branches.getCommit("headPointer");
         Utils.writeContents(HEAD_POINTER, branchName);
         Branches.updateBranches(branchName, headPointer);
@@ -240,7 +260,7 @@ public class Repository {
     public static void rm_branch(String branchName) {
         HashMap<String, String> branches = Branches.getBranches();
         if (!branches.containsKey(branchName)) {
-            System.out.println("branch with that name does not exist");
+            System.out.println("A branch with that name does not exist");
             return;
         }
 
@@ -376,15 +396,17 @@ public class Repository {
                     /** conflict resolve */
                     Blob currentBlob = Blob.getBlob(currentHashCode);
                     Blob givenBlob = Blob.getBlob(givenHashCode);
-                    currentBlob.mergeBlob(currentBlob, givenBlob);
-                    StagingArea.addBlobToMap(currentBlob);
+                    Blob.mergeBlob(currentBlob, givenBlob, fileName);
+                    Blob newBlob = new Blob(fileName);
+                    newBlob.addBlobToBLOB_DIR();
+                    StagingArea.addBlobToMap(newBlob);
                     mergeConflict = true;
                 }
             }
         }
         String message = "Merged " + branchName + " into " + Branches.currentBranch;
         commit(message);
-
+        checkoutCurrentBranch();
         if (mergeConflict) {
             System.out.println("Encountered a merge conflict.");
         }
@@ -395,7 +417,7 @@ public class Repository {
         /** Contains hashCode of all commits in given branch */
         HashSet<String> hashcodeSet = new HashSet<>();
         hashcodeSet.add(commit.getHashCode());
-        if (commit.hasParentCommit()) {
+        while (commit.hasParentCommit()) {
             commit = Commit.getCommit(commit.getParentCommit());
             hashcodeSet.add(commit.getHashCode());
         }
@@ -408,5 +430,15 @@ public class Repository {
 
     }
 
-
+    private static void checkoutCurrentBranch() {
+        Commit commit = Branches.getCommit(Branches.currentBranch);
+        HashMap<String, String> Blobs = commit.getBlobs();
+        for (Map.Entry<String, String> entry : Blobs.entrySet()) {
+            String fileName = entry.getKey();
+            String hashCode = entry.getValue();
+            Blob blob = Blob.getBlob(hashCode);
+            File file = Utils.join(CWD, fileName);
+            Utils.writeContents(file, blob.getFileContent());
+        }
+    }
 }

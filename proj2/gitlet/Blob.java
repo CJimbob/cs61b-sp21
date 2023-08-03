@@ -2,7 +2,9 @@ package gitlet;
 
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 
 public class Blob implements Serializable {
@@ -53,14 +55,25 @@ public class Blob implements Serializable {
         return Utils.readObject(blobFile, Blob.class);
     }
 
-    public void mergeBlob(Blob currentBlob, Blob givenBlob) {
+    public static void mergeBlob(Blob currentBlob, Blob givenBlob, String fileName) {
         String string1 = "<<<<<<< HEAD\n";
-        String string2 = "=======\n";
-        String string3 = ">>>>>>>";
+        String string2 = "\n=======\n";
+        String string3 = "\n>>>>>>>";
         byte[] array1 = string1.getBytes();
         byte[] array2 = string2.getBytes();
         byte[] array3 = string3.getBytes();
-        this.fileContent = new byte[array1.length + currentBlob.getFileContent().length + array2.length + givenBlob.getFileContent().length + array3.length];
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            outputStream.write(array1);
+            outputStream.write(currentBlob.getFileContent());
+            outputStream.write(array2);
+            outputStream.write(givenBlob.getFileContent());
+            outputStream.write(array3);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        File file = Utils.join(CWD, fileName);
+        Utils.writeContents(file, outputStream.toByteArray());
 
     }
 

@@ -28,6 +28,17 @@ public class TETile {
     private final String description;
     private final String filepath;
 
+    private boolean occupied = false;
+
+    public boolean isOccupied() {
+        return occupied;
+    }
+
+    public void SetOccupied() {
+        occupied = true;
+    }
+
+
     /**
      * Full constructor for TETile objects.
      * @param character The character displayed on the screen.

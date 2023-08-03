@@ -9,8 +9,8 @@ import java.util.Date; // TODO: You'll likely use this in this class
 import java.util.HashMap;
 import java.util.Map;
 
-import static gitlet.Utils.join;
 import static gitlet.Utils.serialize;
+
 
 /** Represents a gitlet commit object.
  *  TODO: It's a good idea to give a description here of what else this Class
@@ -115,6 +115,11 @@ public class Commit implements Serializable {
 
     public static Commit getCommit(String hashCode) {
         File commitFile = Utils.join(COMMIT_DIR, hashCode);
-        return Utils.readObject(commitFile, Commit.class);
+        if (commitFile.isFile()) {
+            return Utils.readObject(commitFile, Commit.class);
+        } else {
+            return null;
+        }
+
     }
 }
